@@ -7,7 +7,7 @@ const PASSWORD = "/password.svg";
 export default function Home() {
       return (
             <main className="flex min-h-screen w-full flex-col items-center">
-                  <Header title="FFW Lager" closeButton={true} addItemButton={true}></Header>
+                  <Header title="FFW-KLU Lager" closeButton={true} addItemButton={true}></Header>
                   <div className="p-1 pl-2 flex items-center w-2/3 bg-slate-300 rounded-default">
                         <h1 className="text-black">Suchen</h1>
                   </div>
