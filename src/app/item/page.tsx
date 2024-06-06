@@ -1,10 +1,14 @@
 "use client";
-
-import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 
 export default function ItemMenu() {
-      const router = useRouter();
-      const id = router.query.id;
+      const [id, setId] = useState();
+
+      useEffect(() => {
+            const params = new URLSearchParams(window.location.search);
+            const idParam: any = params.get("id");
+            setId(idParam);
+      }, []);
 
       if (!id) {
             // Handle the case where id is not available
