@@ -1,15 +1,23 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 export default function ItemMenu() {
-      const searchParams = useSearchParams();
+      const router = useRouter();
+      const id = router.query.id;
 
-      const id = searchParams.get("id");
+      if (!id) {
+            // Handle the case where id is not available
+            return (
+                  <main className="w-full min-h-screen">
+                        <h1 className="text-black">Loading...</h1>
+                  </main>
+            );
+      }
 
       return (
             <main className="w-full min-h-screen">
-                  <h1 className="text-black">{"Item with id: " + id}</h1>
+                  <h1 className="text-black">Item with id: {id}</h1>
             </main>
       );
 }
