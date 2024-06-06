@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
       return (
             <html lang="en">
-                  <body className={inter.className + " bg-slate-50 dark:bg-black overflow-hidden"}>{children}</body>
+                  <body className={inter.className + " bg-slate-50 text-black dark:text-white overflow-hidden"}>{children}</body>
             </html>
       );
 }

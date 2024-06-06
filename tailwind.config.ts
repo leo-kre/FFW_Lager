@@ -1,27 +1,23 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
-  theme: {
-    extend: {
-borderRadius: {
+      content: ["./src/pages/**/*.{js,ts,jsx,tsx,mdx}", "./src/components/**/*.{js,ts,jsx,tsx,mdx}", "./src/app/**/*.{js,ts,jsx,tsx,mdx}"],
+      theme: {
+            extend: {
+                  borderRadius: {
                         default: "3px",
                   },
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
-colors: {
-                        "accent-red": "#EF3939",
-                        "accent-blue": "#3F72F6",
+                  backgroundImage: {
+                        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+                        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
                   },
-    },
-  },
-  plugins: [],
+                  colors: {
+                        "accent-red": "#ff4444",
+                        "accent-blue": "#3F72F6",
+                        "accent-gray": "#272727",
+                  },
+            },
+      },
+      plugins: [],
 };
 export default config;
