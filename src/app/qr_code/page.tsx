@@ -7,24 +7,29 @@ import Image from "next/image";
 import cameraImage from "../../../public/camera.svg";
 import Header from "@/components/Header";
 
+const scannerSize = 300;
+
 export default function QR_Scanner() {
       const router = useRouter();
       const [result, setResult] = useState("No result");
       const [scannerInitialized, setScannerInitialized] = useState(false);
       const [html5QrCode, setHtml5QrCode] = useState(null);
 
-      if (result != "No result") {
+      if (result !== "No result") {
             router.push("/item?id=" + result);
       }
 
       const startScanner = () => {
             const config = {
                   fps: 30, // Increased FPS for better scanning performance
-                  qrbox: { width: 250, height: 250 }, // Adjusted QR box size
+                  qrbox: { width: scannerSize, height: scannerSize }, // Adjusted QR box size
                   rememberLastUsedCamera: true,
                   aspectRatio: 1.0,
                   experimentalFeatures: {
                         useBarCodeDetectorIfSupported: true, // Use barcode detector if supported
+                  },
+                  videoConstraints: {
+                        zoom: 2, // Apply a slight zoom
                   },
             };
 
