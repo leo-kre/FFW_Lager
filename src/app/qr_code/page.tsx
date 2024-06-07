@@ -29,6 +29,7 @@ export default function QR_Scanner() {
                         useBarCodeDetectorIfSupported: true, // Use barcode detector if supported
                   },
                   videoConstraints: {
+                        facingMode: { exact: "environment" }, // Use back camera
                         zoom: 2, // Apply a slight zoom
                   },
             };
