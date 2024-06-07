@@ -73,8 +73,8 @@ export default function QR_Scanner() {
             <main className="w-full min-h-screen flex flex-col items-center">
                   <Header addItemButton={false} title="" closeButton={true}></Header>
                   <div className="w-full h-full flex flex-col justify-around items-center mt-10"></div>
-                  <div id="container" className="aspect-square w-fit max-w-[90%] min-h-[250px] h-fit ring-2 rounded-default relative">
-                        <div id="reader" className="absolute top-0 left-0 w-full h-full rounded-default"></div>
+                  <div id="container" className="aspect-square  w-[300px] min-h-[300px] max-w-[90%] h-fit ring-2 rounded-default relative">
+                        <div id="reader" className="absolute top-0 left-0 w-[300px] h-[300px] rounded-default"></div>
                         {!scannerInitialized && (
                               <button onClick={handleManualScan} className=" text-black p-2 rounded absolute w-full h-full flex justify-center items-center">
                                     <Image src={cameraImage} alt="QR Code" width={100} height={100} />
