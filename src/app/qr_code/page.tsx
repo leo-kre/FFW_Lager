@@ -74,7 +74,7 @@ export default function QR_Scanner() {
                   <Header addItemButton={false} title="" closeButton={true}></Header>
                   <div className="w-full h-full flex flex-col justify-around items-center mt-10">
                         <div id="container" className="aspect-square w-fit min-h-[300px] max-w-[90%] h-fit ring-2 rounded-default relative">
-                              <div id="reader" className="top-0 left-0 w-full h-full rounded-default"></div>
+                              <div id="reader" className={`top-0 left-0 w-full h-full ${scannerInitialized ? "rounded-default" : "hidden"}`}></div>
 
                               {!scannerInitialized && (
                                     <button onClick={handleManualScan} className=" text-black p-2 rounded absolute inset-0 flex justify-center items-center">
