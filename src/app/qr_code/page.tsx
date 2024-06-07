@@ -14,6 +14,7 @@ export default function QR_Scanner() {
       const [result, setResult] = useState("No result");
       const [scannerInitialized, setScannerInitialized] = useState(false);
       const [html5QrCode, setHtml5QrCode] = useState(null);
+      const [error, setError] = useState(null);
 
       if (result !== "No result") {
             router.push("/item?id=" + result);
@@ -21,14 +22,14 @@ export default function QR_Scanner() {
 
       const startScanner = () => {
             const config = {
-                  fps: 30, // Increased FPS for better scanning performance
-                  qrbox: { width: scannerSize, height: scannerSize }, // Adjusted QR box size
+                  fps: 30,
+                  qrbox: { width: scannerSize, height: scannerSize },
+                  aspectRatio: 1.0,
                   rememberLastUsedCamera: true,
                   experimentalFeatures: {
-                        useBarCodeDetectorIfSupported: true, // Use barcode detector if supported
+                        useBarCodeDetectorIfSupported: true,
                   },
                   videoConstraints: {
-                        facingMode: { exact: "environment" }, // Use back camera
                         zoom: 4, // Apply a slight zoom
                   },
             };
@@ -38,15 +39,17 @@ export default function QR_Scanner() {
             };
 
             const qrCodeErrorCallback = (errorMessage: any) => {
-                  // Do nothing if no QR code is found
+                  setError(errorMessage);
             };
 
             const scanner: any = new Html5Qrcode("reader");
             setHtml5QrCode(scanner);
-            scanner.start({ facingMode: "environment" }, config, qrCodeSuccessCallback, qrCodeErrorCallback).catch((error: Error) => {
-                  console.error("Unable to start the QR scanner. ", error);
-            });
-            setScannerInitialized(true);
+            scanner
+                  .start({ facingMode: "environment" }, config, qrCodeSuccessCallback, qrCodeErrorCallback)
+                  .then(() => setScannerInitialized(true))
+                  .catch((error: Error) => {
+                        console.error("Unable to start the QR scanner. ", error);
+                  });
       };
 
       useEffect(() => {
@@ -70,7 +73,7 @@ export default function QR_Scanner() {
             <main className="w-full min-h-screen flex flex-col items-center">
                   <Header addItemButton={false} title="" closeButton={true}></Header>
                   <div className="w-full h-full flex flex-col justify-around items-center mt-10"></div>
-                  <div id="container" className="w-[250px] min-h-[250px] h-fit ring-2 rounded-default relative">
+                  <div id="container" className="w-[250px] max-w-[90%] min-h-[250px] h-fit ring-2 rounded-default relative">
                         <div id="reader" className="absolute top-0 left-0 w-full h-full rounded-default"></div>
                         {!scannerInitialized && (
                               <button onClick={handleManualScan} className=" text-black p-2 rounded absolute w-full h-full flex justify-center items-center">
