@@ -1,6 +1,7 @@
+"use client";
 import { useEffect, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
-import { useRouter } from "next/navigation"; // Changed import for useRouter
+import { useRouter } from "next/router"; // Changed import for useRouter
 import Image from "next/image";
 import cameraImage from "../../../public/camera.svg";
 import Header from "@/components/Header";
