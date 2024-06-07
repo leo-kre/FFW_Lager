@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Html5Qrcode } from "html5-qrcode";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import cameraImage from "../../../public/camera.svg";
@@ -11,33 +12,58 @@ const scannerSize = 300;
 export default function QR_Scanner() {
       const router = useRouter();
       const [result, setResult] = useState("No result");
+      const [scannerInitialized, setScannerInitialized] = useState(false);
+      const [html5QrCode, setHtml5QrCode] = useState(null);
 
-      const handleInputChange = async (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                  try {
-                        const imageData = await decodeImage(file);
-                        const code = jsQR(imageData.data, imageData.width, imageData.height);
-                        if (code) {
-                              setResult(code.data);
-                              router.push("/item?id=" + code.data);
-                        } else {
-                              setResult("No QR code found");
-                        }
-                  } catch (error) {
-                        console.error("Error decoding image: ", error);
-                        setResult("Error decoding image");
-                  }
-            }
+      if (result !== "No result") {
+            router.push("/item?id=" + result);
+      }
+
+      const startScanner = () => {
+            const config = {
+                  fps: 30, // Increased FPS for better scanning performance
+                  qrbox: { width: scannerSize, height: scannerSize }, // Adjusted QR box size
+                  rememberLastUsedCamera: true,
+                  experimentalFeatures: {
+                        useBarCodeDetectorIfSupported: true, // Use barcode detector if supported
+                  },
+                  videoConstraints: {
+                        facingMode: { exact: "environment" }, // Use back camera
+                        zoom: 4, // Apply a slight zoom
+                  },
+            };
+
+            const qrCodeSuccessCallback = (decodedText: string) => {
+                  setResult(decodedText);
+            };
+
+            const qrCodeErrorCallback = (errorMessage: any) => {
+                  // Do nothing if no QR code is found
+            };
+
+            const scanner: any = new Html5Qrcode("reader");
+            setHtml5QrCode(scanner);
+            scanner.start({ facingMode: "environment" }, config, qrCodeSuccessCallback, qrCodeErrorCallback).catch((error: Error) => {
+                  console.error("Unable to start the QR scanner. ", error);
+            });
+            setScannerInitialized(true);
       };
 
+      useEffect(() => {
+            return () => {
+                  const htmlQR: any = html5QrCode;
+                  if (html5QrCode) {
+                        htmlQR.stop().catch((error: Error) => {
+                              console.error("Failed to stop html5QrcodeScanner. ", error);
+                        });
+                  }
+            };
+      }, [html5QrCode]);
+
       const handleManualScan = () => {
-            const input = document.createElement("input");
-            input.type = "file";
-            input.accept = "image/*";
-            input.capture = "camera";
-            input.onchange = handleInputChange;
-            input.click();
+            if (!scannerInitialized) {
+                  startScanner();
+            }
       };
 
       return (
@@ -45,9 +71,12 @@ export default function QR_Scanner() {
                   <Header addItemButton={false} title="" closeButton={true}></Header>
                   <div className="w-full h-full flex flex-col justify-around items-center mt-10"></div>
                   <div id="container" className="w-[250px] min-h-[250px] h-fit ring-2 rounded-default relative">
-                        <button onClick={handleManualScan} className="text-black p-2 rounded absolute w-full h-full flex justify-center items-center">
-                              <Image src={cameraImage} alt="QR Code" width={100} height={100} />
-                        </button>
+                        <div id="reader" className="absolute top-0 left-0 w-full h-full rounded-default"></div>
+                        {!scannerInitialized && (
+                              <button onClick={handleManualScan} className=" text-black p-2 rounded absolute w-full h-full flex justify-center items-center">
+                                    <Image src={cameraImage} alt="QR Code" width={100} height={100} />
+                              </button>
+                        )}
                   </div>
             </main>
       );
