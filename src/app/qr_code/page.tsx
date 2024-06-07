@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import cameraImage from "../../../public/camera.svg"; // Importiere das Bild korrekt
+import cameraImage from "../../../public/camera.svg";
 import Header from "@/components/Header";
 
 export default function QR_Scanner() {
@@ -18,18 +18,27 @@ export default function QR_Scanner() {
       }
 
       const startScanner = () => {
-            const config = { fps: 10, qrbox: { width: 350, height: 350 }, rememberLastUsedCamera: true };
-            const qrCodeSuccessCallback = (decodedText: any) => {
+            const config = {
+                  fps: 30, // Increased FPS for better scanning performance
+                  qrbox: { width: 250, height: 250 }, // Adjusted QR box size
+                  rememberLastUsedCamera: true,
+                  aspectRatio: 1.0,
+                  experimentalFeatures: {
+                        useBarCodeDetectorIfSupported: true, // Use barcode detector if supported
+                  },
+            };
+
+            const qrCodeSuccessCallback = (decodedText: string) => {
                   setResult(decodedText);
             };
+
             const qrCodeErrorCallback = (errorMessage: any) => {
                   // Do nothing if no QR code is found
             };
 
-            const scanner = new Html5Qrcode("reader");
-            let sc: any = scanner;
-            setHtml5QrCode(sc);
-            scanner.start({ facingMode: "environment" }, config, qrCodeSuccessCallback, qrCodeErrorCallback).catch((error) => {
+            const scanner: any = new Html5Qrcode("reader");
+            setHtml5QrCode(scanner);
+            scanner.start({ facingMode: "environment" }, config, qrCodeSuccessCallback, qrCodeErrorCallback).catch((error: Error) => {
                   console.error("Unable to start the QR scanner. ", error);
             });
             setScannerInitialized(true);
@@ -37,9 +46,9 @@ export default function QR_Scanner() {
 
       useEffect(() => {
             return () => {
+                  const htmlQR: any = html5QrCode;
                   if (html5QrCode) {
-                        const h: any = html5QrCode;
-                        h.stop().catch((error: Error) => {
+                        htmlQR.stop().catch((error: Error) => {
                               console.error("Failed to stop html5QrcodeScanner. ", error);
                         });
                   }
@@ -56,7 +65,7 @@ export default function QR_Scanner() {
             <main className="w-full min-h-screen flex flex-col items-center">
                   <Header addItemButton={false} title="" closeButton={true}></Header>
                   <div className="w-full h-full flex flex-col justify-around items-center mt-10"></div>
-                  <div id="container" className="w-[350px] min-h-[350px] h-fit ring-2 rounded-default relative">
+                  <div id="container" className="w-[250px] min-h-[250px] h-fit ring-2 rounded-default relative">
                         <div id="reader" className="absolute top-0 left-0 w-full h-full"></div>
                         {!scannerInitialized && (
                               <button onClick={handleManualScan} className=" text-black p-2 rounded absolute w-full h-full flex justify-center items-center">
