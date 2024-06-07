@@ -17,7 +17,8 @@ export default function RootLayout({
       children: React.ReactNode;
 }>) {
       return (
-            <html lang="en">
+            <html lang="en" style={{ WebkitTapHighlightColor: "transparent" }}>
+                  <meta name="viewport" content="user-scalable=no"></meta>
                   <body className={inter.className + " bg-slate-50 text-black dark:text-white overflow-hidden"}>{children}</body>
             </html>
       );
