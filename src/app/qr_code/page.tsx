@@ -29,6 +29,7 @@ export default function QR_Scanner() {
                         useBarCodeDetectorIfSupported: true,
                   },
                   videoConstraints: {
+                        facingMode: "environment", // Use back camera
                         zoom: 4, // Apply a slight zoom
                   },
             };
@@ -44,7 +45,7 @@ export default function QR_Scanner() {
             const scanner: any = new Html5Qrcode("reader");
             setHtml5QrCode(scanner);
             scanner
-                  .start({ facingMode: "environment" }, config, qrCodeSuccessCallback, qrCodeErrorCallback)
+                  .start(config, qrCodeSuccessCallback, qrCodeErrorCallback)
                   .then(() => setScannerInitialized(true))
                   .catch((error: Error) => {
                         console.error("Unable to start the QR scanner. ", error);
@@ -71,15 +72,16 @@ export default function QR_Scanner() {
       return (
             <main className="w-full min-h-screen flex flex-col items-center">
                   <Header addItemButton={false} title="" closeButton={true}></Header>
-                  <div className="w-full h-full flex flex-col justify-around items-center mt-10"></div>
-                  <div id="container" className="aspect-square w-fit min-h-[300px] max-w-[90%] h-fit ring-2 rounded-default relative">
-                        <div id="reader" className="top-0 left-0 w-[300px] h-[300px] rounded-default"></div>
+                  <div className="w-full h-full flex flex-col justify-around items-center mt-10">
+                        <div id="container" className="aspect-square w-fit min-h-[300px] max-w-[90%] h-fit ring-2 rounded-default relative">
+                              <div id="reader" className="w-full h-full rounded-default"></div>
 
-                        {!scannerInitialized && (
-                              <button onClick={handleManualScan} className=" text-black p-2 rounded absolute w-full h-full flex justify-center items-center">
-                                    <Image src={cameraImage} alt="QR Code" width={100} height={100} />
-                              </button>
-                        )}
+                              {!scannerInitialized && (
+                                    <button onClick={handleManualScan} className=" text-black p-2 rounded absolute inset-0 flex justify-center items-center">
+                                          <Image src={cameraImage} alt="QR Code" width={100} height={100} />
+                                    </button>
+                              )}
+                        </div>
                   </div>
             </main>
       );
