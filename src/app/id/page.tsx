@@ -12,7 +12,7 @@ export default function Input_ID() {
       const [id, setID] = useState<string>("");
 
       if (id.length >= 4) {
-            router.push("/item?id=" + id);
+            router.push("/view_item?id=" + id);
       }
 
       useEffect(() => {
