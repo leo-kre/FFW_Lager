@@ -83,7 +83,7 @@ export default function ItemMenu() {
 
 async function fetchDataFromAPI(itemID: string) {
       try {
-            const res = await fetch(`http://localhost:5000/api/getItem`, {
+            const res = await fetch(`localhost:5000/api/getItem`, {
                   method: "POST",
                   headers: {
                         "Content-Type": "application/json",
@@ -105,7 +105,7 @@ async function fetchDataFromAPI(itemID: string) {
 
 async function sendDataToAPI(itemData: ItemBody) {
       try {
-            const res = await fetch(`http://localhost:5000/api/setItem`, {
+            const res = await fetch(`localhost:5000/api/setItem`, {
                   method: "POST",
                   headers: {
                         "Content-Type": "application/json",
