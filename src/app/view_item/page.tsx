@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const apiRoute = "http://" + process.env.hostdomain + ":" + process.env.port;
+const apiRoute = process.env.hostdomain + ":" + process.env.port;
 
 export default function ItemViewer() {
       const [title, setTitle] = useState("");

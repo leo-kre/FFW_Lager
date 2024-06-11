@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
       env: {
-            hostdomain: "localhost",
+            hostdomain: "http://localhost",
             port: "5000",
       },
 };
