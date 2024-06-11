@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 
-export default function ItemMenu() {
+const apiRoute = "http://" + process.env.hostdomain + ":" + process.env.port;
+
+export default function ItemViewer() {
       const [title, setTitle] = useState("");
       const [id, setId] = useState("");
       const [location, setLocation] = useState("");
@@ -45,14 +47,6 @@ export default function ItemMenu() {
             );
       }
 
-      if (!apiData) {
-            return (
-                  <main className="w-full min-h-screen">
-                        <h1 className="text-black">No data found for item with id: {id}</h1>
-                  </main>
-            );
-      }
-
       const saveData = () => {
             sendDataToAPI({
                   title: title,
@@ -62,6 +56,14 @@ export default function ItemMenu() {
                   stored: stored,
             });
       };
+
+      if (!apiData) {
+            return (
+                  <main className="w-full min-h-screen">
+                        <h1 className="text-black">No data found for item with id: {id}</h1>
+                  </main>
+            );
+      }
 
       return (
             <main className="w-full min-h-screen text-black">
@@ -83,7 +85,7 @@ export default function ItemMenu() {
 
 async function fetchDataFromAPI(itemID: string) {
       try {
-            const res = await fetch(`localhost:5000/api/getItem`, {
+            const res = await fetch(apiRoute + "/api/getItem", {
                   method: "POST",
                   headers: {
                         "Content-Type": "application/json",
@@ -93,9 +95,11 @@ async function fetchDataFromAPI(itemID: string) {
                   }),
             });
 
-            const data = await res.json();
-            console.log(data);
+            if (!res.ok) {
+                  throw new Error("Failed to fetch data");
+            }
 
+            const data = await res.json();
             return data;
       } catch (err) {
             console.error(err);
@@ -105,7 +109,7 @@ async function fetchDataFromAPI(itemID: string) {
 
 async function sendDataToAPI(itemData: ItemBody) {
       try {
-            const res = await fetch(`localhost:5000/api/setItem`, {
+            const res = await fetch(apiRoute + "/api/setItem", {
                   method: "POST",
                   headers: {
                         "Content-Type": "application/json",

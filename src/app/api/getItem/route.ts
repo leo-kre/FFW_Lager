@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
       const data: RequestData = await request.json();
 
+      console.log("SEND DATA");
+
       const item: ItemBody = {
             title: "Test",
             id: data.id,
