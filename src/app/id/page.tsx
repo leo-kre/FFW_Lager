@@ -51,7 +51,7 @@ export default function Input_ID() {
                   <div className="w-full flex justify-around mt-6 px-4">
                         {inputRefs.map((ref, index) => (
                               <div key={index} className="ring-4 ring-slate-300 rounded-default w-16 h-32 flex justify-center items-center">
-                                    <input ref={ref} className="text-black font-extrabold text-6xl w-16 h-32 text-center" type="text" maxLength={1} pattern="[0-9]*" inputMode="numeric" onInput={(e) => handleInput(e, index)} onKeyDown={(e) => handleKeyDown(e, index)} />
+                                    <input ref={ref} className="text-black font-extrabold text-6xl w-16 h-32 text-center rounded-default" type="text" maxLength={1} pattern="[0-9]*" inputMode="numeric" onInput={(e) => handleInput(e, index)} onKeyDown={(e) => handleKeyDown(e, index)} />
                               </div>
                         ))}
                   </div>

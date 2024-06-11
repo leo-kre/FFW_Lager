@@ -80,7 +80,7 @@ export default function QR_Scanner() {
             <main className="w-full min-h-screen flex flex-col items-center">
                   <Header addItemButton={false} title="" closeButton={true}></Header>
                   <div className="w-full h-full flex flex-col justify-around items-center mt-10">
-                        <h1 className="text-accent-red text-xl font-extrabold h-8 w-full text-center">{errorMessage}</h1>
+                        <h1 className="text-accent-red text-2xl font-extrabold h-12 w-full text-center">{errorMessage}</h1>
                         <div id="container" className="aspect-square w-fit min-h-[300px] max-w-[90%] h-fit ring-2 rounded-default relative">
                               <div id="reader" className="top-0 left-0 w-full h-full rounded-default ring-2 rounded-default"></div>
 

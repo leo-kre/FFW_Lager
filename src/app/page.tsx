@@ -12,16 +12,16 @@ export default function Home() {
                         <h1 className="text-black">Suchen</h1>
                   </div>
 
-                  <div className="w-4/5 max-w-[80%] flex flex-col justify-center items-center gap-4 mt-5">
-                        <a className="bg-accent-red w-fit rounded-xl flex justify-center items-center" href="./qr_code">
+                  <div className="w-4/5 h-full flex flex-col justify-center items-center gap-4 mt-5">
+                        <a className="bg-accent-red w-4/5 aspect-square rounded-xl flex justify-center items-center" href="./qr_code">
                               <div className="w-fit h-fit flex justify-center items-center p-4">
-                                    <Image src={QR_CODE} alt="QR Code" width={175} height={175} />
+                                    <Image src={QR_CODE} alt="QR Code" width={200} height={200} />
                               </div>
                         </a>
 
-                        <a className="bg-accent-blue w-fit rounded-xl flex justify-center items-center" href="./id">
+                        <a className="bg-accent-blue w-4/5 aspect-square rounded-xl flex justify-center items-center" href="./id">
                               <div className="w-fit h-fit flex justify-center items-center p-4">
-                                    <Image src={PASSWORD} alt="PASSWORD" width={175} height={175} />
+                                    <Image src={PASSWORD} alt="PASSWORD" width={200} height={200} />
                               </div>
                         </a>
                   </div>
