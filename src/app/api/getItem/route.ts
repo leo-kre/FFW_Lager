@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
+      console.log("I WANT DATA");
+
       const data: RequestData = await request.json();
 
       const item: ItemBody = {

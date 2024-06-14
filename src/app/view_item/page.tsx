@@ -1,8 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 
-const apiRoute = process.env.hostdomain + ":" + process.env.port;
-
 export default function ItemViewer() {
       const [title, setTitle] = useState("");
       const [id, setId] = useState("");
@@ -85,7 +83,7 @@ export default function ItemViewer() {
 
 async function fetchDataFromAPI(itemID: string) {
       try {
-            const res = await fetch(apiRoute + "/api/getItem", {
+            const res = await fetch(process.env.NEXT_PUBLIC_HOSTDOMAIN + "/api/getItem", {
                   method: "POST",
                   headers: {
                         "Content-Type": "application/json",
@@ -109,7 +107,7 @@ async function fetchDataFromAPI(itemID: string) {
 
 async function sendDataToAPI(itemData: ItemBody) {
       try {
-            const res = await fetch(apiRoute + "/api/setItem", {
+            const res = await fetch(process.env.NEXT_PUBLIC_HOSTDOMAIN + "/api/setItem", {
                   method: "POST",
                   headers: {
                         "Content-Type": "application/json",
