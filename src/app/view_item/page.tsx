@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 
+const possibleLocations: Array<string> = process.env.NEXT_PUBLIC_LOCATION_LIST?.split(", ") || [];
+
 export default function ItemViewer() {
-      const [title, setTitle] = useState("");
+      const [title, setTitle] = useState("Titel");
       const [id, setId] = useState("");
-      const [location, setLocation] = useState("");
-      const [description, setDescription] = useState("");
+      const [location, setLocation] = useState(possibleLocations[0]);
+      const [description, setDescription] = useState("Beschreibung");
       const [stored, setStored] = useState(Boolean);
 
       const [apiData, setApiData] = useState(null);
@@ -25,10 +27,10 @@ export default function ItemViewer() {
                               setLoading(false);
 
                               const d: ItemBody = dataFromApi;
-                              if (title == "") setTitle(d.title);
-                              if (location == "") setLocation(d.location);
-                              if (description == "") setDescription(d.description);
-                              if (stored == null) setStored(d.stored);
+                              setTitle(d.title);
+                              setLocation(d.location);
+                              setDescription(d.description);
+                              setStored(d.stored);
                         })
                         .catch((err) => {
                               console.error("Failed to fetch data:", err);
@@ -63,12 +65,60 @@ export default function ItemViewer() {
             );
       }
 
+      let locationOptions = Array<any>();
+
+      possibleLocations.forEach((location, index) => {
+            locationOptions.push(
+                  <option key={"option" + index} value={location}>
+                        {location}
+                  </option>
+            );
+      });
+
       return (
             <main className="w-full min-h-screen text-black">
-                  <h1>Title: {title}</h1>
+                  <input
+                        value={title}
+                        className="bg-transparent text-3xl font-bold"
+                        onChange={(event) => {
+                              setTitle(event.target.value);
+                        }}
+                  ></input>
                   <h1>Item with id: {id}</h1>
-                  <h1>location: {location}</h1>
-                  <h1>stored: {JSON.stringify(stored)}</h1>
+                  <div className="flex items-center gap-1">
+                        <h1>Lagerort: </h1>
+                        <select
+                              value={location}
+                              onChange={(event) => {
+                                    setLocation(event.target.value);
+                              }}
+                              className="bg-transparent border rounded p-2"
+                        >
+                              {locationOptions}
+                        </select>
+                  </div>
+
+                  <textarea
+                        className="ring-gray-300"
+                        maxLength={50}
+                        value={description}
+                        onChange={(event) => {
+                              setDescription(event.target.value);
+                        }}
+                  ></textarea>
+
+                  <div className="flex gap-1">
+                        <h1>Im Lager: </h1>
+                        <button
+                              className={"text-center min-w-10 px-2 flex justify-center items-center rounded-default " + (stored ? "bg-green-500" : "bg-accent-red")}
+                              onClick={() => {
+                                    setStored(!stored);
+                              }}
+                        >
+                              <h1 className="w-fit ">{stored ? "Ja" : "Nein"}</h1>
+                        </button>
+                  </div>
+
                   <button
                         className="bg-green-500 p-2 rounded-default"
                         onClick={() => {
@@ -114,7 +164,7 @@ async function sendDataToAPI(itemData: ItemBody) {
                   },
                   body: JSON.stringify(itemData),
             });
-            const data = await res.json();
+            const data: APIStatus = await res.json();
             return data;
       } catch (err) {
             console.error(err);

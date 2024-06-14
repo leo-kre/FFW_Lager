@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request) {
-      console.log("I WANT DATA");
+const locationOptions: Array<string> = process.env.NEXT_PUBLIC_LOCATION_LIST?.split(", ");
 
+export async function POST(request: Request) {
       const data: RequestData = await request.json();
 
       const item: ItemBody = {
             title: "Test",
             id: data.id,
-            location: "MTF - A3.1",
+            location: "MTF - A1.1",
             description: "Test description",
-            stored: false,
+            stored: true,
       };
 
       return NextResponse.json(item);
