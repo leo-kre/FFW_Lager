@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import connection from "../../../../lib/db";
+import dbConnection from "../../../../db";
 
 export async function POST(request: Request) {
       const data: RequestData = await request.json();
@@ -13,11 +13,21 @@ export async function POST(request: Request) {
             stored: true,
       };
 
+      const itemData = await getDataFromDatabase(data.id);
+      console.log(itemData);
+
       return NextResponse.json(item);
 }
 
-function getDataFromDatabase(id: string) {
+async function getDataFromDatabase(id: string) {
       let ID: Number = Number(id);
+
+      console.log("call database");
+
+      const [rows] = await dbConnection.query("SELECT * FROM Item;");
+      console.log("called database");
+
+      return rows;
 }
 
 type ItemBody = {
