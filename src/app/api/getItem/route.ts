@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const locationOptions: Array<string> = process.env.NEXT_PUBLIC_LOCATION_LIST?.split(", ");
+import connection from "../../../../lib/db";
 
 export async function POST(request: Request) {
       const data: RequestData = await request.json();
@@ -14,6 +14,10 @@ export async function POST(request: Request) {
       };
 
       return NextResponse.json(item);
+}
+
+function getDataFromDatabase(id: string) {
+      let ID: Number = Number(id);
 }
 
 type ItemBody = {
