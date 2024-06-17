@@ -8,7 +8,7 @@ export default function ItemViewer() {
       const [id, setId] = useState("");
       const [location, setLocation] = useState(possibleLocations[0]);
       const [description, setDescription] = useState("Beschreibung");
-      const [stored, setStored] = useState(Boolean);
+      const [inStock, setInStock] = useState(Boolean);
 
       const [apiData, setApiData] = useState(null);
       const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ export default function ItemViewer() {
                               setTitle(d.title);
                               setLocation(d.location);
                               setDescription(d.description);
-                              setStored(d.stored);
+                              setInStock(d.inStock);
                         })
                         .catch((err) => {
                               console.error("Failed to fetch data:", err);
@@ -53,7 +53,7 @@ export default function ItemViewer() {
                   id: id,
                   location: location,
                   description: description,
-                  stored: stored,
+                  inStock: inStock,
             });
       };
 
@@ -110,12 +110,12 @@ export default function ItemViewer() {
                   <div className="flex gap-1">
                         <h1>Im Lager: </h1>
                         <button
-                              className={"text-center min-w-10 px-2 flex justify-center items-center rounded-default " + (stored ? "bg-green-500" : "bg-accent-red")}
+                              className={"text-center min-w-10 px-2 flex justify-center items-center rounded-default " + (inStock ? "bg-green-500" : "bg-accent-red")}
                               onClick={() => {
-                                    setStored(!stored);
+                                    setInStock(!inStock);
                               }}
                         >
-                              <h1 className="w-fit ">{stored ? "Ja" : "Nein"}</h1>
+                              <h1 className="w-fit ">{inStock ? "Ja" : "Nein"}</h1>
                         </button>
                   </div>
 
@@ -177,7 +177,7 @@ type ItemBody = {
       id: string;
       location: string;
       description: string;
-      stored: boolean;
+      inStock: boolean;
 };
 
 type APIStatus = {

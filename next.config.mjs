@@ -6,7 +6,7 @@ const nextConfig = {
 
             NEXT_PUBLIC_DB_HOST: "leokre.de",
             NEXT_PUBLIC_DB_USER: "webAccess",
-            NEXT_PUBLIC_DB_PASSWORD: "webAccess_112",
+            NEXT_PUBLIC_DB_PASSWORD: "webAccess_001",
             NEXT_PUBLIC_DB_DATABASE_NAME: "FFW_Lager",
       },
 };

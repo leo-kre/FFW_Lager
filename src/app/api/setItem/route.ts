@@ -15,5 +15,5 @@ type ItemBody = {
       id: number;
       location: string;
       description: string;
-      stored: boolean;
+      inStock: boolean;
 };

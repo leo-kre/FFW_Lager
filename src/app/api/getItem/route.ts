@@ -10,7 +10,7 @@ export async function POST(request: Request) {
             id: data.id,
             location: "MTF - A1.1",
             description: "Test description",
-            stored: true,
+            inStock: true,
       };
 
       const itemData = await getDataFromDatabase(data.id);
@@ -35,7 +35,7 @@ type ItemBody = {
       id: string;
       location: string;
       description: string;
-      stored: boolean;
+      inStock: boolean;
 };
 
 type RequestData = {
