@@ -14,6 +14,8 @@ export default function dbConnection() {
 }
 
 export async function getDataFromDatabase(id: string) {
+      console.log("GET DATA FROM DATABASE: " + id);
+
       try {
             const pool = dbConnection();
             const ID = Number(id);
