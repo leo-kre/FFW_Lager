@@ -2,12 +2,14 @@
 const mysql = require("mysql2/promise");
 
 export default function dbConnection() {
+      console.log(process.env.NEXT_PUBLIC_DB_HOST);
+
       return mysql.createPool({
-            host: "130.61.125.137",
-            user: "webAccess",
-            password: "webAccess_001",
-            database: "FFW_Lager",
-            port: 4000,
+            host: process.env.NEXT_PUBLIC_DB_HOST,
+            user: process.env.NEXT_PUBLIC_DB_USER,
+            password: process.env.NEXT_PUBLIC_DB_PASSWORD,
+            database: process.env.NEXT_PUBLIC_DB_DATABASE_NAME,
+            port: Number(process.env.NEXT_PUBLIC_DB_DATABASE_PORT),
       });
 }
 
@@ -40,15 +42,13 @@ export async function saveDataToDatabase(item: ItemBody): Promise<void> {
             } else {
                   await pool.query("INSERT INTO Item (title, location, description, inStock) VALUES (?, ?, ?, ?)", [item.title, item.location, item.description, item.inStock ? 1 : 0]);
             }
-
-            console.log("Data saved to database:", item);
       } catch (error) {
             console.error("Error saving data to database:", error);
             throw error;
       }
 }
 
-export type ItemBody = {
+type ItemBody = {
       title: string;
       id: string;
       location: string;
