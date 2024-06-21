@@ -2,8 +2,6 @@
 const mysql = require("mysql2/promise");
 
 export default function dbConnection() {
-      console.log(process.env.NEXT_PUBLIC_DB_HOST);
-
       return mysql.createPool({
             host: process.env.NEXT_PUBLIC_DB_HOST,
             user: process.env.NEXT_PUBLIC_DB_USER,
@@ -46,7 +44,7 @@ export async function saveDataToDatabase(item: ItemBody): Promise<DBStatus> {
             if (item.id) {
                   await pool.query("UPDATE Item SET title = ?, location = ?, description = ?, inStock = ? WHERE id = ?", [item.title, item.location, item.description, item.inStock ? 1 : 0, item.id]);
             } else {
-                  await createEntityInDatabase(item);
+                  await createEntityInDatabase(item.id);
             }
 
             return { status: "item saved to database" };
@@ -56,23 +54,24 @@ export async function saveDataToDatabase(item: ItemBody): Promise<DBStatus> {
       }
 }
 
-export async function createEntityInDatabase(item: ItemBody): Promise<DBStatus> {
+export async function createEntityInDatabase(id: string): Promise<any> {
       try {
             const pool = dbConnection();
 
-            if (!item.id) {
+            if (!id) {
                   return { status: "no id provided" };
             }
 
-            const isIDAvailable = await isItemIDInUse(Number(item.id));
+            const isIDAvailable = await isItemIDInUse(Number(id));
 
             if (isIDAvailable) {
-                  await pool.query("INSERT INTO Item (id, title, location, description, inStock) VALUES (?, ?, ?, ?, ?)", [ID, item.title, item.location, item.description, item.inStock ? 1 : 0]);
+                  const ID = Number(id);
+                  await pool.query("INSERT INTO Item (id, title, location, description, inStock) VALUES (?, ?, ?, ?, ?)", [ID, "Titel", "MTF - A1.1", "", 1]);
             } else {
                   return { status: "id already in use" };
             }
 
-            return { status: "success" };
+            return await getDataFromDatabase(id);
       } catch (error) {
             console.error("Error saving data to database:", error);
             throw error;

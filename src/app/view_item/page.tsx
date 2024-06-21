@@ -25,12 +25,7 @@ export default function ItemViewer() {
                         .then((dataFromApi) => {
                               setApiData(dataFromApi);
                               setLoading(false);
-
-                              const d: ItemBody = dataFromApi;
-                              setTitle(d.title);
-                              setLocation(d.location);
-                              setDescription(d.description);
-                              setInStock(d.inStock);
+                              setData(dataFromApi);
                         })
                         .catch((err) => {
                               console.error("Failed to fetch data:", err);
@@ -38,6 +33,14 @@ export default function ItemViewer() {
                         });
             }
       }, [id]);
+
+      const setData = (dataFromApi: any) => {
+            const d: ItemBody = dataFromApi;
+            setTitle(d.title);
+            setLocation(d.location);
+            setDescription(d.description);
+            setInStock(d.inStock);
+      };
 
       if (loading) {
             return (
@@ -59,8 +62,17 @@ export default function ItemViewer() {
 
       if (!apiData) {
             return (
-                  <main className="w-full min-h-screen">
-                        <h1 className="text-black">No data found for item with id: {id}</h1>
+                  <main className="w-full min-h-screen flex justify-center items-center">
+                        <button
+                              className="bg-gray-50 ring-accent-gray ring-1 p-1 rounded-default text-black"
+                              onClick={async () => {
+                                    const data: ItemBody = await createItem(id);
+
+                                    setData(data);
+                              }}
+                        >
+                              {"Gegenstand für #" + id + " erstellen"}
+                        </button>
                   </main>
             );
       }
@@ -165,6 +177,24 @@ async function sendDataToAPI(itemData: ItemBody) {
                   body: JSON.stringify(itemData),
             });
             const data: APIStatus = await res.json();
+            return data;
+      } catch (err) {
+            console.error(err);
+            throw err;
+      }
+}
+
+async function createItem(id: string) {
+      try {
+            const res = await fetch(process.env.NEXT_PUBLIC_HOSTDOMAIN + "/api/addItem", {
+                  method: "POST",
+                  headers: {
+                        "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ id: id }),
+            });
+
+            const data: ItemBody = await res.json();
             return data;
       } catch (err) {
             console.error(err);
