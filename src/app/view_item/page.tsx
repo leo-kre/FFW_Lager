@@ -10,7 +10,7 @@ export default function ItemViewer() {
       const [description, setDescription] = useState("Beschreibung");
       const [inStock, setInStock] = useState(Boolean);
 
-      const [apiData, setApiData] = useState(null);
+      const [apiData, setApiData] = useState({ id, title, location, description, inStock });
       const [loading, setLoading] = useState(true);
 
       useEffect(() => {
@@ -94,15 +94,17 @@ export default function ItemViewer() {
       });
 
       return (
-            <main className="w-full min-h-screen text-black">
+            <main className="w-full min-h-screen text-black pl-4 pt-4">
                   <input
                         value={title}
-                        className="bg-transparent text-3xl font-bold"
+                        className="bg-transparent text-3xl font-bold underline decoration-accent-gray"
                         onChange={(event) => {
                               setTitle(event.target.value);
                         }}
                   ></input>
+
                   <h1>Item with id: {id}</h1>
+
                   <div className="flex items-center gap-1">
                         <h1>Lagerort: </h1>
                         <select
@@ -116,14 +118,16 @@ export default function ItemViewer() {
                         </select>
                   </div>
 
-                  <textarea
-                        className="ring-gray-300"
-                        maxLength={50}
-                        value={description}
-                        onChange={(event) => {
-                              setDescription(event.target.value);
-                        }}
-                  ></textarea>
+                  <div className="w-full h-fit flex justify-left">
+                        <textarea
+                              className="bg-gray-50 ring-accent-gray ring-1 p-1 rounded-default text-black w-11/12 h-24 resize-none"
+                              maxLength={150}
+                              value={description}
+                              onChange={(event) => {
+                                    setDescription(event.target.value);
+                              }}
+                        ></textarea>
+                  </div>
 
                   <div className="flex gap-1">
                         <h1>Im Lager: </h1>

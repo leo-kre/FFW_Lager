@@ -1,4 +1,3 @@
-// db.js
 const mysql = require("mysql2/promise");
 
 export default function dbConnection() {
@@ -86,6 +85,35 @@ export async function isItemIDInUse(ID: number): Promise<boolean> {
             if (rows.lengt == 0) return false;
 
             return true;
+      } catch (error) {
+            return false;
+      }
+}
+
+export async function searchItem(title: string) {
+      const pool = dbConnection();
+      try {
+            const [rows] = await pool.query("SELECT * FROM Item WHERE LOWER(title) LIKE LOWER(CONCAT('%', ?, '%')) OR LOWER(description) LIKE LOWER(CONCAT('%', ?, '%'))", [title, title]);
+
+            if (rows.lengt == 0) return false;
+
+            return rows;
+      } catch (error) {
+            return false;
+      }
+}
+
+export async function searchLocation(title: string) {
+      const pool = dbConnection();
+
+      const searchText = title.toLowerCase();
+
+      try {
+            const [rows] = await pool.query("SELECT * FROM Item WHERE LOWER(title) LIKE LOWER(CONCAT('%', ?, '%')) OR LOWER(description) LIKE LOWER(CONCAT('%', ?, '%'))", [searchText, searchText]);
+
+            if (rows.lengt == 0) return false;
+
+            return rows;
       } catch (error) {
             return false;
       }

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createEntityInDatabase, getDataFromDatabase, saveDataToDatabase } from "../../db";
+import { createEntityInDatabase } from "../../db";
 
 export async function POST(request: Request) {
       const data: idBody = await request.json();
