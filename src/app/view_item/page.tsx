@@ -16,6 +16,7 @@ export default function ItemViewer() {
       useEffect(() => {
             const params = new URLSearchParams(window.location.search);
             const idParam: any = params.get("id");
+
             setId(idParam);
       }, []);
 
@@ -60,15 +61,20 @@ export default function ItemViewer() {
             });
       };
 
+      const createAndLoadItem = async () => {
+            const data: ItemBody = await createItem(id);
+
+            setApiData(data); // Update apiData with the newly created item
+            setData(data); // Update the form fields with the newly created item data
+      };
+
       if (!apiData) {
             return (
                   <main className="w-full min-h-screen flex justify-center items-center">
                         <button
                               className="bg-gray-50 ring-accent-gray ring-1 p-1 rounded-default text-black"
                               onClick={async () => {
-                                    const data: ItemBody = await createItem(id);
-
-                                    setData(data);
+                                    createAndLoadItem();
                               }}
                         >
                               {"Gegenstand für #" + id + " erstellen"}
