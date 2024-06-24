@@ -95,10 +95,10 @@ export default function ItemViewer() {
 
       return (
             <main className="w-full min-h-screen text-black pl-4 pt-4">
-                  <div>
+                  <div className="w-1/2">
                         <input
                               value={title}
-                              className="bg-transparent text-3xl font-bold border border-b-black focus-none outline-none"
+                              className="bg-transparent text-3xl font-bold border border-b-black focus-none outline-none w-1/2"
                               onChange={(event) => {
                                     setTitle(event.target.value);
                               }}

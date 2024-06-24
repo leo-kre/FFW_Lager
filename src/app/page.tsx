@@ -7,7 +7,7 @@ const QR_CODE = "/qr-code.svg";
 const PASSWORD = "/password.svg";
 
 export default function Home() {
-      const [searchTerm, setSearchTerm] = useState("a");
+      const [searchTerm, setSearchTerm] = useState("");
       const [searchResult, setSearchResult] = useState<Array<ItemBody>>([]);
       const [showSearchResults, setShowSearchResults] = useState(true);
 
@@ -24,14 +24,18 @@ export default function Home() {
 
       const searchResultObjectList: Array<any> = [];
 
+      searchResultObjectList.push(<h1 className="text-black">{"Items: " + searchTerm + " : " + searchResult.length}</h1>);
+
       searchResult.forEach((item, index) => {
             searchResultObjectList.push(
-                  <div key={index} className="border-t border-black w-full last:border-y">
+                  <a href={"/view_item?id=" + item.id} key={index} className="border-t border-black w-full last:border-y">
                         <h1 className="text-black">{item.title}</h1>
                         <h2 className="text-accent-gray">{item.id}</h2>
-                  </div>
+                  </a>
             );
       });
+
+      console.log(searchResultObjectList);
 
       return (
             <main className="flex min-h-screen w-full flex-col items-center">
@@ -92,6 +96,8 @@ async function searchItemsOnDB(title: string) {
             const data: Array<ItemBody> = await res.json();
             return data;
       } catch (err) {
+            console.log("ERROR. " + err);
+
             console.error(err);
             throw err;
       }

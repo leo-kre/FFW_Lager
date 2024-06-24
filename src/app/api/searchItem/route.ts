@@ -4,6 +4,8 @@ import { searchItem } from "../../db";
 export async function POST(request: Request) {
       const data: RequestData = await request.json();
 
+      console.log(data.title);
+
       const Items: Array<ItemBody> = await searchItem(data.title);
 
       return NextResponse.json(Items);
