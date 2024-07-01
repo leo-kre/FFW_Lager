@@ -22,6 +22,10 @@ export default function Home() {
             }
       }, [searchTerm]);
 
+      if (searchTerm.length > 0) {
+            setShowSearchResults(true);
+      }
+
       const searchResultObjectList: Array<any> = [];
 
       searchResultObjectList.push(<h1 className="text-black">{"Items: " + searchTerm + " : " + searchResult.length}</h1>);
@@ -30,7 +34,7 @@ export default function Home() {
             searchResultObjectList.push(
                   <a href={"/view_item?id=" + item.id} key={index} className="border-t border-black w-full last:border-y">
                         <h1 className="text-black">{item.title}</h1>
-                        <h2 className="text-accent-gray">{item.id}</h2>
+                        <h2 className="text-accent-gray">{item.location}</h2>
                   </a>
             );
       });
