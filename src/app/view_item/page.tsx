@@ -123,7 +123,6 @@ export default function ItemViewer() {
                   <div className="w-full h-fit flex justify-left">
                         <textarea
                               className="bg-gray-50 ring-accent-gray ring-1 p-1 rounded-default text-black w-11/12 h-24 resize-none"
-                              maxLength={150}
                               value={description}
                               onChange={(event) => {
                                     setDescription(event.target.value);
