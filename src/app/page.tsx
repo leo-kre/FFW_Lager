@@ -46,7 +46,7 @@ export default function Home() {
           ID
         </div>
       </div>
-      {inputField}
+      <div className="m-2 w-2/3">{inputField}</div>
     </main>
   );
 }
