@@ -46,7 +46,9 @@ export default function Home() {
           ID
         </div>
       </div>
-      <div className="m-2 w-2/3">{inputField}</div>
+      <div className="m-2 w-2/3 flex items-center justify-center">
+        {inputField}
+      </div>
     </main>
   );
 }
