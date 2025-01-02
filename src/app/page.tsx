@@ -1,18 +1,18 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Header from "../components/Header";
 import QR_Scanner from "../components/QRScanner";
-const QR_CODE = "/qr-code.svg";
+import Input_ID from "@/components/Input_ID";
 
 export default function Home() {
-  const [inputMode, setInputMode] = useState("qr-code");
+  const [inputMode, setInputMode] = useState("id");
 
   let inputField;
 
   if (inputMode == "qr-code") {
     inputField = <QR_Scanner></QR_Scanner>;
   } else {
-    inputField = <h1>id</h1>;
+    inputField = <Input_ID></Input_ID>;
   }
 
   return (

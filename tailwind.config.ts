@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       borderRadius: {
-        default: "3px",
+        default: "8px",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
