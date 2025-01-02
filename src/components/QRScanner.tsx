@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { BrowserMultiFormatReader } from '@zxing/library';
+import { BrowserMultiFormatReader } from "@zxing/library";
 
 export default function QRScanner() {
   const router = useRouter();
@@ -16,15 +16,18 @@ export default function QRScanner() {
     // Ensure navigator.mediaDevices is available before accessing it
     if (typeof window !== "undefined" && navigator.mediaDevices) {
       if (videoRef.current) {
-        codeReader
-          .decodeFromVideoDevice(null, videoRef.current, (result, error) => {
+        codeReader.decodeFromVideoDevice(
+          null,
+          videoRef.current,
+          (result, error) => {
             if (result) {
               setResult(result.getText());
             }
             if (error) {
-              console.error(error);
+              //console.error(error);
             }
-          });
+          },
+        );
       }
     } else {
       setHasPermission(false); // If not available, we disable scanning
@@ -48,10 +51,13 @@ export default function QRScanner() {
     <main className="flex flex-col items-center bg-black w-full h-full">
       {!hasPermission && (
         <p className="text-white mt-4">
-          Camera access is not available. Please ensure you're on HTTPS and the browser supports camera access.
+          Camera access is not available. Please ensure you're on HTTPS and the
+          browser supports camera access.
         </p>
       )}
-      {hasPermission && <video ref={videoRef} style={{ width: "100%", height: "auto" }} />}
+      {hasPermission && (
+        <video ref={videoRef} style={{ width: "100%", height: "auto" }} />
+      )}
       {result && <p className="text-white mt-4">Scanned Result: {result}</p>}
     </main>
   );
