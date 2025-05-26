@@ -73,8 +73,6 @@ async function searchItemsOnDB(title: string) {
     const data: Array<ItemBody> = await res.json();
     return data;
   } catch (err) {
-    console.log("ERROR. " + err);
-
     console.error(err);
     throw err;
   }

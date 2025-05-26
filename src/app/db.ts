@@ -17,6 +17,7 @@ export async function getDataFromDatabase(id: string): Promise<any> {
 
             const [rows] = await pool.query("SELECT * FROM Item WHERE id = ?", [ID]);
 
+            console.log("fetching data from database");
             if (rows.length == 0) {
                   return null;
             }
