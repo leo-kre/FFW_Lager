@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getDataFromDatabase } from "../../db";
 
 export async function POST(request: Request) {
+      console.log("api request");
+      
       const data: RequestData = await request.json();
 
       const itemData: ItemBody | null = await getDataFromDatabase(data.id);

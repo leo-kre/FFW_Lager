@@ -1,4 +1,5 @@
 "use client";
+import { log } from "console";
 import { useEffect, useState } from "react";
 
 const possibleLocations: Array<string> = process.env.NEXT_PUBLIC_LOCATION_LIST?.split(", ") || [];
@@ -22,6 +23,7 @@ export default function ItemViewer() {
 
       useEffect(() => {
             if (id) {
+                  console.log("fetch Data");
                   fetchDataFromAPI(id)
                         .then((dataFromApi) => {
                               setApiData(dataFromApi);
@@ -155,6 +157,8 @@ export default function ItemViewer() {
 }
 
 async function fetchDataFromAPI(itemID: string) {
+      console.log(process.env.NEXT_PUBLIC_HOSTDOMAIN);
+      
       try {
             const res = await fetch(process.env.NEXT_PUBLIC_HOSTDOMAIN + "/api/getItem", {
                   method: "POST",

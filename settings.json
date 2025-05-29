@@ -1,0 +1,8 @@
+{
+    "continue.model": {
+      "provider": "ollama",
+      "model": "llama3.1:8b",
+      "apiBase": "http://localhost:11434"
+    },
+    "continue.inlineSuggestions": true
+  }
