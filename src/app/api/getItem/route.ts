@@ -15,7 +15,7 @@ type ItemBody = {
       title: string;
       id: string;
       location: string;
-      description: string;
+      containedItems: string[];
       inStock: boolean;
 };
 

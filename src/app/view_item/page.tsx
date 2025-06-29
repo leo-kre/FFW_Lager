@@ -8,10 +8,10 @@ export default function ItemViewer() {
       const [title, setTitle] = useState("Titel");
       const [id, setId] = useState("");
       const [location, setLocation] = useState(possibleLocations[0]);
-      const [description, setDescription] = useState("Beschreibung");
+      const [containedItems, setContainedItems] = useState<string[]>([]);
       const [inStock, setInStock] = useState(Boolean);
 
-      const [apiData, setApiData] = useState({ id, title, location, description, inStock });
+      const [apiData, setApiData] = useState({ id, title, location, containedItems: containedItems, inStock });
       const [loading, setLoading] = useState(true);
 
       useEffect(() => {
@@ -38,11 +38,11 @@ export default function ItemViewer() {
       }, [id]);
 
       const setData = (dataFromApi: any) => {
-            const d: ItemBody = dataFromApi;
-            setTitle(d.title);
-            setLocation(d.location);
-            setDescription(d.description);
-            setInStock(d.inStock);
+            const data: ItemBody = dataFromApi;
+            setTitle(data.title);
+            setLocation(data.location);
+            setContainedItems(data.containedItems);
+            setInStock(data.inStock);
       };
 
       if (loading) {
@@ -58,7 +58,7 @@ export default function ItemViewer() {
                   title: title,
                   id: id,
                   location: location,
-                  description: description,
+                  containedItems: containedItems,
                   inStock: inStock,
             });
       };
@@ -95,12 +95,48 @@ export default function ItemViewer() {
             );
       });
 
+      const updateContainedItems = (index: number, value: string) => {
+            const newData = [...containedItems];
+            newData[index] = value;
+            setContainedItems(newData);
+      };
+
+      const createNewContainedItem = () => {
+            setContainedItems([...containedItems, ""]);
+      };
+
+      const deleteContainedItem = (index: number) => {
+            console.log("delete Item, " + index);
+            
+            const newData = [...containedItems];
+            newData.splice(index, 1);
+            setContainedItems(newData);
+          };
+
+      let containedItemsBody = Array<any>();
+
+      containedItems.forEach((containedItem: string, index: number) => {
+            containedItemsBody.push(
+                  <div className="w-full flex" key={index}>
+                        <button className="p-1 mr-3 bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-md" onClick={() => deleteContainedItem(index)}>🗑️</button>
+                        <input
+                        className="w-full mr-3 p-2 rounded-sm"
+                        type="text"
+                        key={index}
+                        value={containedItem}
+                        onChange={(e) => updateContainedItems(index, e.target.value)}
+                        />
+                  </div>
+                  
+            )
+      })
+
       return (
-            <main className="w-full min-h-screen text-black pl-4 pt-4">
-                  <div className="w-1/2">
+            <main className="w-full min-h-screen text-black p-4">
+                  <div className="w-full">
                         <input
                               value={title}
-                              className="bg-transparent text-3xl font-bold border border-b-black focus-none outline-none w-1/2"
+                              className="bg-transparent text-3xl font-bold border border-b-black focus-none outline-none w-full px-2 py-1"
                               onChange={(event) => {
                                     setTitle(event.target.value);
                               }}
@@ -122,15 +158,11 @@ export default function ItemViewer() {
                         </select>
                   </div>
 
-                  <div className="w-full h-fit flex justify-left">
-                        <textarea
-                              className="bg-gray-50 ring-accent-gray ring-1 p-1 rounded-default text-black w-11/12 h-24 resize-none"
-                              value={description}
-                              onChange={(event) => {
-                                    setDescription(event.target.value);
-                              }}
-                        ></textarea>
+                  <div className="w-full h-fit flex justify-left flex-col gap-2">
+                        {containedItemsBody}
                   </div>
+
+                  <button className="p-2" onClick={() => {createNewContainedItem()}}>Add contained Item</button>
 
                   <div className="flex gap-1">
                         <h1>Im Lager: </h1>
@@ -157,8 +189,6 @@ export default function ItemViewer() {
 }
 
 async function fetchDataFromAPI(itemID: string) {
-      console.log(process.env.NEXT_PUBLIC_HOSTDOMAIN);
-      
       try {
             const res = await fetch(process.env.NEXT_PUBLIC_HOSTDOMAIN + "/api/getItem", {
                   method: "POST",
@@ -221,7 +251,7 @@ type ItemBody = {
       title: string;
       id: string;
       location: string;
-      description: string;
+      containedItems: string[];
       inStock: boolean;
 };
 

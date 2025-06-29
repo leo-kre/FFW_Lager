@@ -42,7 +42,16 @@ export async function saveDataToDatabase(item: ItemBody): Promise<DBStatus> {
             }
 
             if (item.id) {
-                  await pool.query("UPDATE Item SET title = ?, location = ?, description = ?, inStock = ? WHERE id = ?", [item.title, item.location, item.description, item.inStock ? 1 : 0, item.id]);
+                  await pool.query(
+                        "UPDATE Item SET title = ?, location = ?, containedItems = ?, inStock = ? WHERE id = ?",
+                        [
+                          item.title,
+                          item.location,
+                          JSON.stringify(item.containedItems),
+                          item.inStock ? 1 : 0,
+                          item.id
+                        ]
+                      );
             } else {
                   await createEntityInDatabase(item.id);
             }
@@ -124,7 +133,7 @@ type ItemBody = {
       title: string;
       id: string;
       location: string;
-      description: string;
+      containedItems: string[];
       inStock: boolean;
 };
 
