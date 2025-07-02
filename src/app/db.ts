@@ -75,7 +75,7 @@ export async function createEntityInDatabase(id: string): Promise<any> {
 
             if (isIDAvailable) {
                   const ID = Number(id);
-                  await pool.query("INSERT INTO Item (id, title, location, description, inStock) VALUES (?, ?, ?, ?, ?)", [ID, "Titel", "MTF - A1.1", "", 1]);
+                  await pool.query("INSERT INTO Item (id, title, location, containedItems, inStock) VALUES (?, ?, ?, ?, ?)", [ID, "Titel", "MTF - A1.1", JSON.stringify([]), 1]);
             } else {
                   return { status: "id already in use" };
             }
@@ -100,14 +100,48 @@ export async function isItemIDInUse(ID: number): Promise<boolean> {
       }
 }
 
-export async function searchItem(title: string) {
+export async function searchItems(title: string) {
       const pool = dbConnection();
       try {
-            const [rows] = await pool.query("SELECT * FROM Item WHERE LOWER(title) LIKE LOWER(CONCAT('%', ?, '%')) OR LOWER(description) LIKE LOWER(CONCAT('%', ?, '%'))", [title, title]);
+// Step 1: Search by title
+const [titleMatches] = await pool.query(
+      `SELECT id, title AS match FROM Item WHERE LOWER(title) LIKE LOWER(CONCAT(?, '%'))`,
+      [title]
+    );
+    
+    // Step 2: Search containedItems manually (for MySQL < 8.0.4)
+    const indexList = Array.from({ length: 15 }, (_, i) => i); // max 15 elements
+    
+    const containedItemQueries = await Promise.all(
+indexList.map(i =>
+        pool.query(
+          `SELECT id, JSON_UNQUOTE(JSON_EXTRACT(containedItems, '$[${i}]')) AS match
+           FROM Item
+           WHERE JSON_UNQUOTE(JSON_EXTRACT(containedItems, '$[${i}]')) IS NOT NULL
+             AND LOWER(JSON_UNQUOTE(JSON_EXTRACT(containedItems, '$[${i}]'))) LIKE LOWER(CONCAT(?, '%'))`,
+          [title]
+        )
+      )
+    );
+    
+    const containedItemResults = containedItemQueries
+      .flatMap(([rows]) => rows)
+      .filter((row, index, self) =>
+        row.match &&
+        self.findIndex(r => r.match === row.match && r.id === row.id) === index
+    );
+    
+    // Step 3: Combine and format
+    const combinedResults = [...titleMatches, ...containedItemResults]
+      .slice(0, 5)
+      .map(({ match, id }) => ({ [match]: id }));
 
-            if (rows.lengt == 0) return false;
+      console.log(combinedResults);
+      
+            
+            if(combinedResults.length == 0) return false;
 
-            return rows;
+            return combinedResults;
       } catch (error) {
             return false;
       }

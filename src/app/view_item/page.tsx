@@ -64,7 +64,9 @@ export default function ItemViewer() {
       };
 
       const createAndLoadItem = async () => {
-            const data: ItemBody = await createItem(id);
+            const data: ItemBody | null = await createItem(id);
+
+            if(data == null) return;
 
             setApiData(data); // Update apiData with the newly created item
             setData(data); // Update the form fields with the newly created item data
@@ -115,21 +117,23 @@ export default function ItemViewer() {
 
       let containedItemsBody = Array<any>();
 
-      containedItems.forEach((containedItem: string, index: number) => {
-            containedItemsBody.push(
-                  <div className="w-full flex" key={index}>
-                        <button className="p-1 mr-3 bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-md" onClick={() => deleteContainedItem(index)}>🗑️</button>
-                        <input
-                        className="w-full mr-3 p-2 rounded-sm"
-                        type="text"
-                        key={index}
-                        value={containedItem}
-                        onChange={(e) => updateContainedItems(index, e.target.value)}
-                        />
-                  </div>
-                  
-            )
-      })
+      if(containedItems != null) {
+            containedItems.forEach((containedItem: string, index: number) => {
+                  containedItemsBody.push(
+                        <div className="w-full flex" key={index}>
+                              <button className="p-1 mr-3 bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-md" onClick={() => deleteContainedItem(index)}>🗑️</button>
+                              <input
+                              className="w-full mr-3 p-2 rounded-sm"
+                              type="text"
+                              key={index}
+                              value={containedItem}
+                              onChange={(e) => updateContainedItems(index, e.target.value)}
+                              />
+                        </div>
+                        
+                  )
+            });
+      }
 
       return (
             <main className="w-full min-h-screen text-black p-4">
@@ -238,6 +242,8 @@ async function createItem(id: string) {
                   },
                   body: JSON.stringify({ id: id }),
             });
+
+            if(res == null) return null;
 
             const data: ItemBody = await res.json();
             return data;
