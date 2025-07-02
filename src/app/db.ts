@@ -17,7 +17,6 @@ export async function getDataFromDatabase(id: string): Promise<any> {
 
             const [rows] = await pool.query("SELECT * FROM Item WHERE id = ?", [ID]);
 
-            console.log("fetching data from database");
             if (rows.length == 0) {
                   return null;
             }
@@ -82,7 +81,7 @@ export async function createEntityInDatabase(id: string): Promise<any> {
 
             return await getDataFromDatabase(id);
       } catch (error) {
-            console.error("Error saving data to database:", error);
+            console.error("Error creating entity in database:", error);
             throw error;
       }
 }
@@ -96,7 +95,8 @@ export async function isItemIDInUse(ID: number): Promise<boolean> {
 
             return true;
       } catch (error) {
-            return false;
+            console.error("Error checking if id is in use", error);
+            throw error;
       }
 }
 
