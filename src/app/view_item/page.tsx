@@ -64,9 +64,17 @@ export default function ItemViewer() {
       };
 
       const createAndLoadItem = async () => {
-            const data: ItemBody | null = await createItem(id);
+            let data: ItemBody | null = await createItem(id);
 
-            if(data == null) return;
+            if(data == null) {
+                  data = {
+                        title: "Titel",
+                        id: id,
+                        location: possibleLocations[0],
+                        containedItems: [],
+                        inStock: true
+                  }
+            }
 
             setApiData(data); // Update apiData with the newly created item
             setData(data); // Update the form fields with the newly created item data
