@@ -12,7 +12,7 @@ type Item = {
 export default function Home() {
   const [searchString, setSearchString] = useState("");
   const [searchResults, setSearchResults] = useState<Item[]>([]);
-  const [inputMode, setInputMode] = useState("id");
+  const [inputMode, setInputMode] = useState<"id" | "qr-code">("id");
   const [itemsInStorage, setItemsInStorage] = useState<Item[]>([]);
 
   useEffect(() => {
@@ -27,15 +27,16 @@ export default function Home() {
   }, []);
 
   const searchInDatabase = (text: string) => {
-    setSearchString(text);
     const lowered = text.trim().toLowerCase();
-    const results = itemsInStorage.filter((item) =>
-      item.title.toLowerCase().includes(lowered)
+    setSearchString(text);
+    setSearchResults(
+      itemsInStorage.filter((item) =>
+        item.title.toLowerCase().includes(lowered)
+      )
     );
-    setSearchResults(results);
   };
 
-  const searchResultsBody: JSX.Element[] = searchResults.map((item) => (
+  const searchResultsBody = searchResults.map((item) => (
     <a
       key={`${item.id}-${item.title}`}
       href={`/view_item?id=${item.id}`}
@@ -50,7 +51,7 @@ export default function Home() {
     inputMode === "qr-code" ? (
       <QR_Scanner />
     ) : (
-      <Input_ID setSearchString={setSearchString} />
+      <Input_ID/>
     );
 
   return (
@@ -63,14 +64,13 @@ export default function Home() {
         value={searchString}
         onChange={(e) => searchInDatabase(e.target.value)}
         onFocus={(e) => searchInDatabase(e.target.value)}
-        // Removed onBlur to prevent premature clearing
       />
 
       <div className="w-full flex flex-col items-center">
         <div className="w-2/3 h-10 mt-6 flex flex-row justify-between">
           <div
             className={
-              "w-24 h-full rounded-3xl text-center content-center font-semibold text-xl " +
+              "w-24 h-full rounded-3xl text-center content-center font-semibold text-xl cursor-pointer " +
               (inputMode === "qr-code"
                 ? "bg-accent text-white"
                 : "bg-black/[0.2] text-black")
@@ -81,7 +81,7 @@ export default function Home() {
           </div>
           <div
             className={
-              "w-24 h-full rounded-3xl text-center content-center font-semibold text-xl " +
+              "w-24 h-full rounded-3xl text-center content-center font-semibold text-xl cursor-pointer " +
               (inputMode === "id"
                 ? "bg-accent text-text"
                 : "bg-black/[0.2] text-black")
@@ -105,24 +105,14 @@ export default function Home() {
 }
 
 async function fetchItemsFromDatabase(): Promise<Item[]> {
-  try {
-    const res = await fetch(
-      process.env.NEXT_PUBLIC_HOSTDOMAIN + "/api/getAllItemsInStorage",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch data");
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_HOSTDOMAIN}/api/getAllItemsInStorage`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
     }
+  );
 
-    return await res.json();
-  } catch (err) {
-    console.error(err);
-    throw err;
-  }
+  if (!res.ok) throw new Error("Failed to fetch data");
+  return (await res.json()) as Item[];
 }
