@@ -1,4 +1,4 @@
-import mysql from "mysql2/promise";
+import mysql, { RowDataPacket } from "mysql2/promise";
 
 let pool: mysql.Pool;
 
@@ -18,14 +18,15 @@ function getPool(): mysql.Pool {
   return pool;
 }
 
-export async function getDataFromDatabase(id: string): Promise<any> {
+export async function getDataFromDatabase(id: string): Promise<ItemBody | null> {
   try {
     const pool = getPool();
     const ID = Number(id);
-    
-    const [rows] = await pool.query("SELECT * FROM Item WHERE id = ?", [ID]) as unknown as [ItemBody[]];
+    const [rows] = await pool.query<RowDataPacket[]>(
+      "SELECT * FROM Item WHERE id = ?", [ID]
+    );
     if (rows.length === 0) return null;
-    return rows[0];
+    return rows[0] as ItemBody;
   } catch (error) {
     console.error("Error fetching data from database:", error);
     throw error;
@@ -55,7 +56,7 @@ export async function saveDataToDatabase(item: ItemBody): Promise<DBStatus> {
   }
 }
 
-export async function createEntityInDatabase(id: string): Promise<any> {
+export async function createEntityInDatabase(id: string): Promise<ItemBody | DBStatus | null> {
   try {
     const pool = getPool();
     if (!id) return { status: "no id provided" };
@@ -79,7 +80,9 @@ export async function createEntityInDatabase(id: string): Promise<any> {
 export async function isItemIDInUse(ID: number): Promise<boolean> {
   const pool = getPool();
   try {
-    const [rows] = await pool.query("SELECT * FROM Item WHERE id = ?", [ID]) as unknown as [ItemBody[]];
+    const [rows] = await pool.query<RowDataPacket[]>(
+      "SELECT * FROM Item WHERE id = ?", [ID]
+    );
     return rows.length !== 0;
   } catch (error) {
     console.error("Error checking if id is in use", error);
@@ -87,10 +90,10 @@ export async function isItemIDInUse(ID: number): Promise<boolean> {
   }
 }
 
-export async function searchItems(title: string) {
+export async function searchItems(title: string): Promise<Record<string, number>[] | false> {
   const pool = getPool();
   try {
-    const [titleMatches] = await pool.query(
+    const [titleMatches] = await pool.query<RowDataPacket[]>(
       `SELECT id, title AS match FROM Item WHERE LOWER(title) LIKE LOWER(CONCAT(?, '%'))`,
       [title]
     );
@@ -99,7 +102,7 @@ export async function searchItems(title: string) {
 
     const containedItemQueries = await Promise.all(
       indexList.map((i) =>
-        pool.query(
+        pool.query<RowDataPacket[]>(
           `SELECT id, JSON_UNQUOTE(JSON_EXTRACT(containedItems, '$[${i}]')) AS match
            FROM Item
            WHERE JSON_UNQUOTE(JSON_EXTRACT(containedItems, '$[${i}]')) IS NOT NULL
@@ -110,7 +113,7 @@ export async function searchItems(title: string) {
     );
 
     const containedItemResults = containedItemQueries
-      .flatMap(([rows]) => rows)
+      .flatMap((result) => result[0])
       .filter(
         (row, index, self) =>
           row.match &&
@@ -121,18 +124,17 @@ export async function searchItems(title: string) {
       .slice(0, 5)
       .map(({ match, id }) => ({ [match]: id }));
 
-    if (combinedResults.length === 0) return false;
-    return combinedResults;
+    return combinedResults.length === 0 ? false : combinedResults;
   } catch (error) {
     console.error("Error in searchItems:", error);
     return false;
   }
 }
 
-export async function getAllItemsInStorage() {
+export async function getAllItemsInStorage(): Promise<RowDataPacket[] | false> {
   const pool = getPool();
   try {
-    const [rows] = await pool.query(
+    const [rows] = await pool.query<RowDataPacket[]>(
       `WITH RECURSIVE seq AS (
          SELECT 0 AS n
          UNION ALL
@@ -156,15 +158,14 @@ export async function getAllItemsInStorage() {
   }
 }
 
-export async function searchLocation(title: string) {
+export async function searchLocation(title: string): Promise<RowDataPacket[] | false> {
   const pool = getPool();
-  const searchText = title.toLowerCase();
   try {
-    const [rows] = await pool.query(
+    const [rows] = await pool.query<RowDataPacket[]>(
       `SELECT * FROM Item 
        WHERE LOWER(title) LIKE LOWER(CONCAT('%', ?, '%')) 
           OR LOWER(description) LIKE LOWER(CONCAT('%', ?, '%'))`,
-      [searchText, searchText]
+      [title, title]
     );
     return rows.length === 0 ? false : rows;
   } catch (error) {
