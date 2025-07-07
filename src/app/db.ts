@@ -22,9 +22,10 @@ export async function getDataFromDatabase(id: string): Promise<any> {
   try {
     const pool = getPool();
     const ID = Number(id);
-    const [rows] = await pool.query("SELECT * FROM Item WHERE id = ?", [ID]);
+    
+    const [rows] = await pool.query("SELECT * FROM Item WHERE id = ?", [ID]) as unknown as [ItemBody[]];
     if (rows.length === 0) return null;
-    return rows[0] as ItemBody;
+    return rows[0];
   } catch (error) {
     console.error("Error fetching data from database:", error);
     throw error;
