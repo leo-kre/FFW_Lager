@@ -4,71 +4,85 @@ import Header from "../components/Header";
 import QR_Scanner from "../components/QRScanner";
 import Input_ID from "@/components/Input_ID";
 
+type Item = {
+  id: number;
+  title: string;
+};
+
 export default function Home() {
   const [searchString, setSearchString] = useState("");
-  const [searchResults, setSearchResults] = useState<string[]>([]);;
+  const [searchResults, setSearchResults] = useState<Item[]>([]);
   const [inputMode, setInputMode] = useState("id");
+  const [itemsInStorage, setItemsInStorage] = useState<Item[]>([]);
 
-  let inputField;
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await fetchItemsFromDatabase();
+        setItemsInStorage(data);
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  }, []);
 
   const searchInDatabase = (text: string) => {
-
-    return;
-
     setSearchString(text);
-    
-    const data: any = fetchItemsFromDatabase(searchString);
-    setSearchResults(data);
+    const lowered = text.trim().toLowerCase();
+    const results = itemsInStorage.filter((item) =>
+      item.title.toLowerCase().includes(lowered)
+    );
+    setSearchResults(results);
+  };
 
-    console.log(searchResults);
-    
-  }
-  
-  let searchResultsBody = Array<any>();
+  const searchResultsBody: JSX.Element[] = searchResults.map((item) => (
+    <a
+      key={`${item.id}-${item.title}`}
+      href={`/view_item?id=${item.id}`}
+      className="block w-full h-16 px-4 py-2 border-b border-l border-r text-black first:rounded-t-xl first:border-t last:rounded-b-xl hover:bg-gray-100"
+    >
+      <div className="text-base font-medium">{item.title}</div>
+      <div className="text-sm text-gray-500">ID: {item.id}</div>
+    </a>
+  ));
 
-  for(let i = 0; i < searchResults.length; i++) {
-    const result = searchResults[i];
-  
-    searchResultsBody.push(
-      <button value={result} className="w-full h-16 border-b border-l border-r text-black first:rounded-t-xl first:border-t last:rounded-b-xl" key={result}>{result}</button>
-    )
-  }
-
-  if (inputMode == "qr-code") {
-    inputField = <QR_Scanner></QR_Scanner>;
-  } else {
-    inputField = <Input_ID></Input_ID>;
-  }
+  const inputField =
+    inputMode === "qr-code" ? (
+      <QR_Scanner />
+    ) : (
+      <Input_ID setSearchString={setSearchString} />
+    );
 
   return (
     <main className="flex min-h-screen bg-background w-full flex-col items-center">
-      <Header title="FF-KLU" closeButton={true} addItemButton={true}></Header>
+      <Header title="FF-KLU" closeButton={true} addItemButton={true} />
 
-      <input placeholder="Suchen" className="text-black py-1 px-2" 
-      onChange={(e) => {searchInDatabase(e.target.value)}}
-      onFocus={(e) => {searchInDatabase(e.target.value)}}
-      onBlur={() => setSearchString("")}
-      ></input>
+      <input
+        placeholder="Suchen"
+        className="text-black py-1 px-2"
+        value={searchString}
+        onChange={(e) => searchInDatabase(e.target.value)}
+        onFocus={(e) => searchInDatabase(e.target.value)}
+        // Removed onBlur to prevent premature clearing
+      />
 
       <div className="w-full flex flex-col items-center">
         <div className="w-2/3 h-10 mt-6 flex flex-row justify-between">
           <div
             className={
-              "bg-accent w-24 h-full rounded-3xl text-center content-center font-semibold text-xl " +
-              (inputMode == "qr-code"
+              "w-24 h-full rounded-3xl text-center content-center font-semibold text-xl " +
+              (inputMode === "qr-code"
                 ? "bg-accent text-white"
                 : "bg-black/[0.2] text-black")
             }
-            onClick={() => {
-              setInputMode("qr-code");
-            }}
+            onClick={() => setInputMode("qr-code")}
           >
             QR
           </div>
           <div
             className={
-              "bg-accent w-24 h-full rounded-3xl text-center content-center font-semibold text-xl " +
-              (inputMode == "id"
+              "w-24 h-full rounded-3xl text-center content-center font-semibold text-xl " +
+              (inputMode === "id"
                 ? "bg-accent text-text"
                 : "bg-black/[0.2] text-black")
             }
@@ -76,45 +90,37 @@ export default function Home() {
           >
             ID
           </div>
-        
         </div>
-        
+
         <div className="m-2 w-2/3 flex items-center justify-center">
           {inputField}
         </div>
       </div>
 
-    <div className="w-2/3 top-32 absolute rounded-xl bg-white">
-      {(searchString == "" ? "" : searchResultsBody)}
-    </div>
-
+      <div className="w-2/3 top-32 absolute rounded-xl bg-white">
+        {searchString !== "" && searchResultsBody}
+      </div>
     </main>
   );
 }
 
-async function fetchItemsFromDatabase(title: string): Promise<string[]> {
+async function fetchItemsFromDatabase(): Promise<Item[]> {
   try {
     const res = await fetch(
-      process.env.NEXT_PUBLIC_HOSTDOMAIN + "/api/searchItem",
+      process.env.NEXT_PUBLIC_HOSTDOMAIN + "/api/getAllItemsInStorage",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title: title }),
-      },
+      }
     );
 
     if (!res.ok) {
       throw new Error("Failed to fetch data");
     }
 
-    const data: string[] = await res.json();
-
-    console.log(data);
-    
-
-    return data;
+    return await res.json();
   } catch (err) {
     console.error(err);
     throw err;

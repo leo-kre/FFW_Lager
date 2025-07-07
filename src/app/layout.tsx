@@ -4,8 +4,6 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const favicon = "../../public/favicon.ico";
-
 export const metadata: Metadata = {
       title: "FFW-KLU Lager",
       description: "Lager System der FFW KLU",
