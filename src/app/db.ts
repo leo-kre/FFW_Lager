@@ -79,7 +79,7 @@ export async function createEntityInDatabase(id: string): Promise<any> {
 export async function isItemIDInUse(ID: number): Promise<boolean> {
   const pool = getPool();
   try {
-    const [rows] = await pool.query("SELECT * FROM Item WHERE id = ?", [ID]);
+    const [rows] = await pool.query("SELECT * FROM Item WHERE id = ?", [ID]) as unknown as [ItemBody[]];
     return rows.length !== 0;
   } catch (error) {
     console.error("Error checking if id is in use", error);
