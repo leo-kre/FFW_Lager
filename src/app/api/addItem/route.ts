@@ -3,9 +3,6 @@ import { createEntityInDatabase } from "../../db";
 
 export async function POST(request: Request) {
   const data: idBody = await request.json();
-
-  console.log("ADD ITEM: " + data.id);
-
   const result = await createEntityInDatabase(data.id);
 
   if (result === null) {
