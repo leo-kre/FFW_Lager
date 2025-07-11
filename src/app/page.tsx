@@ -56,11 +56,11 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen bg-background w-full flex-col items-center">
-      <Header title="FF-KLU" closeButton={true} addItemButton={true} />
+      <h1 className="w-full my-4 text-center text-black text-5xl font-extrabold">FF-KLU</h1>
 
       <input
         placeholder="Suchen"
-        className="text-black py-1 px-2"
+        className="bg-transparent text-black text-xl font-semibold border border-accent1 focus-none outline-none w-2/3 px-2 py-1 rounded-md"
         value={searchString}
         onChange={(e) => searchInDatabase(e.target.value)}
         onFocus={(e) => searchInDatabase(e.target.value)}
@@ -97,7 +97,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="w-2/3 top-32 absolute rounded-xl bg-white">
+      <div className="w-4/5 top-32 absolute rounded-xl bg-white">
         {searchString !== "" && searchResultsBody}
       </div>
     </main>

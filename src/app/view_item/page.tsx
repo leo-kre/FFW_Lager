@@ -1,8 +1,11 @@
 "use client";
-import { log } from "console";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const possibleLocations: Array<string> = process.env.NEXT_PUBLIC_LOCATION_LIST?.split(", ") || [];
+
+const closeIcon = require("../assets/cross.svg");
+const saveIcon = require("../assets/check.svg");
 
 export default function ItemViewer() {
       const [title, setTitle] = useState("Titel");
@@ -13,6 +16,8 @@ export default function ItemViewer() {
 
       const [apiData, setApiData] = useState({ id, title, location, containedItems: containedItems, inStock });
       const [loading, setLoading] = useState(true);
+
+      const [wasChangeMade, setWasChangeMade] = useState(false);
 
       useEffect(() => {
             const params = new URLSearchParams(window.location.search);
@@ -128,10 +133,13 @@ export default function ItemViewer() {
       if(containedItems != null) {
             containedItems.forEach((containedItem: string, index: number) => {
                   containedItemsBody.push(
-                        <div className="w-full flex" key={index}>
-                              <button className="p-1 mr-3 bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-md" onClick={() => deleteContainedItem(index)}>🗑️</button>
+                        <div className="w-full flex border border-accent1 rounded-md bg-white" key={index}>
+                              <button className="p-2 bg-[#FF3B30] rounded-md rounded-r-none border-r border-accent1" onClick={() => {
+                                    deleteContainedItem(index);
+                                    setWasChangeMade(true);
+                              }}>🗑️</button>
                               <input
-                              className="w-full mr-3 p-2 rounded-sm"
+                              className="pl-2 w-full rounded-r-md"
                               type="text"
                               key={index}
                               value={containedItem}
@@ -144,25 +152,39 @@ export default function ItemViewer() {
       }
 
       return (
-            <main className="w-full min-h-screen text-black p-4">
+            <main className="w-full min-h-screen text-black p-4 bg-white">
+                  <div className="w-full px-2 mb-3 flex justify-between content-center items-center">
+                        <a href="/" className="w-9 aspect-square flex justify-center content-center items-center">
+                        <Image alt="close" src={closeIcon} className="w-7 aspect-square"></Image>
+                        </a>
+                        <h1 className="font-bold text-3xl">ID: {id.toString().padStart(4, '0')}</h1>
+                        <button className={wasChangeMade ? "bg-red-500" : "bg-green-500" + " aspect-square w-9 rounded-md flex justify-center content-center"} onClick={() => {
+                              saveData();
+                              setWasChangeMade(false);
+                              }}>
+                                    <Image alt="save" src={saveIcon} className="aspect-square w-7 fill-green-400"></Image>
+                              </button>
+                        
+                  </div>
+                  
                   <div className="w-full">
                         <input
                               value={title}
-                              className="bg-transparent text-3xl font-bold border border-b-black focus-none outline-none w-full px-2 py-1"
+                              className="bg-transparent text-xl font-semibold border border-accent1 focus-none outline-none w-full px-2 py-1 mb-4 rounded-md"
                               onChange={(event) => {
                                     setTitle(event.target.value);
+                                    setWasChangeMade(true);
                               }}
                         ></input>
                   </div>
 
-                  <h1>Item with id: {id}</h1>
-
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 mb-2">
                         <h1>Lagerort: </h1>
                         <select
                               value={location}
                               onChange={(event) => {
                                     setLocation(event.target.value);
+                                    setWasChangeMade(true);
                               }}
                               className="bg-transparent border rounded p-2"
                         >
@@ -170,32 +192,29 @@ export default function ItemViewer() {
                         </select>
                   </div>
 
-                  <div className="w-full h-fit flex justify-left flex-col gap-2">
-                        {containedItemsBody}
-                  </div>
-
-                  <button className="p-2" onClick={() => {createNewContainedItem()}}>Add contained Item</button>
-
-                  <div className="flex gap-1">
+                  <div className="flex gap-1 mb-2">
                         <h1>Im Lager: </h1>
                         <button
-                              className={"text-center min-w-10 px-2 flex justify-center items-center rounded-default " + (inStock ? "bg-green-500" : "bg-accent-red")}
+                              className={"text-center min-w-10 px-2 flex justify-center items-center rounded-default " + (inStock ? "bg-green-500" : "bg-red-500")}
                               onClick={() => {
                                     setInStock(!inStock);
+                                    setWasChangeMade(true);
                               }}
                         >
                               <h1 className="w-fit ">{inStock ? "Ja" : "Nein"}</h1>
                         </button>
                   </div>
 
-                  <button
-                        className="bg-green-500 p-2 rounded-default"
-                        onClick={() => {
-                              saveData();
-                        }}
-                  >
-                        Save Data
-                  </button>
+                  <div className="w-full h-fit flex justify-left flex-col gap-2">
+                        {containedItemsBody}
+                  </div>
+
+                  <button className="w-full border border-accent1 rounded-md mt-2 text-2xl" onClick={() => {
+                        createNewContainedItem();
+                        setWasChangeMade(true);
+                        }}>+</button>
+
+                  
             </main>
       );
 }
